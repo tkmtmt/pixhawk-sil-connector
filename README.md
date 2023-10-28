@@ -78,7 +78,114 @@ px4のSITLを用いてミッションの確認やアルゴリズムの確認を�
         ```
 1. QGroundControlをインストールする(Windowsに)  
     [ここ](https://docs.qgroundcontrol.com/master/en/getting_started/download_and_install.html)からインストーラをダウンロードしてインストールする。  
-    
+
+## 実行  
+1. include.zipを解凍する。  
+1. make.mを実行する。(1回だけでOK)  
+    memo:  
+    コンパイラの確認。  
+    ```
+    mex -setup c++
+    ```
+1. QGCの設定  
+    Ubuntu上で実行しているPX4と接続するために新しいComm Linkを作成する。  
+    1. スタートバーにQgroundControlと入力してQGCを立ち上げる。  
+    1. Ubuntuを起動する。  
+    1. Ubuntuターミナル上で以下のコマンドを実行してIPを調べる。(inet)  
+        ```
+        ip addr | grep eth0
+        ```
+    1. QGC上で新しい通信リンクを作成する。  
+        アプリケーション設定→通信リンク→追加  
+        名前は適当に入力してUDP選択。  
+        port：`18570`、IP：（上で調べたやつ）でサーバ追加して接続。  
+
+1. IP設定  
+    1. WindowのIPアドレスを調べる  
+        コマンドプロンプトを開いて以下を実行。  
+        ```
+        ipconfig
+        ```
+
+    2. Ubuntu上の`~PX4-Autopilot\start.sh`を開いて編集  
+        ```
+        export PX4_SIM_HOST_ADDR= 上で調べたIPアドレス
+        ```
+1. 実行
+    1. simulinkモデルを開いて実行する。(pixhawk_sil_connector_example.slx)  
+    1. Ubuntu上のターミナルで以下を実行。  
+        ```
+        ./start.sh
+        ```
+
+1. VSCodeによるデバッグ  
+    1. simulinkモデルを開いて実行する。(pixhawk_sil_connector_example.slx)  
+    1. Ubuntuを立ち上げる  
+    1. PX4ソースディレクトリに移動する  
+        ```
+        cd PX4-Autopilot
+        ```
+    1. 以下のコマンドでIPアドレスを設定する。  
+        ```
+        export PX4_SIM_HOST_ADDR=x.x.x.x (4.IP設定と同じ)
+        ```
+    1. VSCodeでそのディレクトリを開く。  
+        ```
+        code .
+        ```
+    1. 拡張機能をインストールするか聞かれるのですべてインストールする。
+    1. 左のタブから実行とデバッグを選択。  
+    1. lunch.jsonを開いて、以下を追加。  
+        ```
+        {
+            "name": "SITL (simulink)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [
+                "${workspaceFolder}/ROMFS/px4fmu_common"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${command:cmake.buildDirectory}/rootfs",
+            "environment": [
+                {
+                    "name": "PX4_SIM_MODEL",
+                    "value": "none_iris"
+                }
+            ],
+            "postDebugTask": "px4_sitl_cleanup",
+            "linux": {
+                "MIMode": "gdb",
+                "externalConsole": false,
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    },
+                    {
+                        "description": "PX4 ignore wq signals",
+                        "text": "handle SIGCONT nostop noprint nopass",
+                        "ignoreFailures": true
+                    }
+                ]
+            },
+            "osx": {
+                "MIMode": "lldb",
+                "externalConsole": true,
+                "setupCommands": [
+                    {
+                        "text": "pro hand -p true -s false -n false SIGCONT",
+                    }
+                ]
+            }
+        }
+        ```
+    1. 実行とデバッグのドロップダウンから、上記で追加したSITL (simulink)を選択してデバッグ開始。
+    1. 好きなところにブレークポイントを設定する。
+
+    参考:[SITL Debugging](https://docs.px4.io/main/en/dev_setup/vscode.html#visual-studio-code-ide-vscode)
+
 
 ## fork元の変更をこのリポジトリにmergeする
 
@@ -98,7 +205,7 @@ fork元に更新があったときに、このリポジトリにも反映した�
 [参考:fork 元のリポジトリの更新を fork 先に merge する](https://nobilearn.medium.com/fork-%E5%85%83%E3%81%AE%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E3%81%AE%E6%9B%B4%E6%96%B0%E3%82%92-fork-%E5%85%88%E3%81%AB-merge-%E3%81%99%E3%82%8B-6fa138921c93)
 
 
-
+# ↓fork元のREADME↓
 # Pixhawk SIL Connector for Simulink
 
 Simulink C++ S-function for software-in-the-loop simulation with Pixhawk.
