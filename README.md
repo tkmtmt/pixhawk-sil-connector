@@ -1,3 +1,104 @@
+# memo
+## 概要
+px4のSITLを用いてミッションの確認やアルゴリズムの確認を行いたい。  
+でもpx4で対応しているSITLシミュレータ(例えばgazeboとか)は中の物理演算がどんな仕組みになっているかわかりにくいし、好きなモデルや空力係数でシミュレーションするためにはどうしたらよいかわからない。  
+そこでシミュレータはSimulinkで作ることにして、px4とSimulinkを接続してSITLできる環境を整えよう。  
+そうすれば、航空機のモデルは任意に作ることができるし、風等の環境だって好きにいじることができるであろう。  
+いかにSimulink環境とPX4環境の構築方法を示す。
+
+## 環境構築
+1. MATLAB/Simulinkをインストールする  
+    MATLABは有料ソフトである。homeライセンスはそんなに高くないから買っちゃおう。  
+    とりあえずMATLABとSimulinkがあれば動くと思う。  
+    https://jp.mathworks.com/products/matlab.html
+
+1. Windows Subsystem for Linuxを導入する  
+    PX4Toolchainを入れるための前準備。  
+    PX4ToolchainはWindowsに直接入れてもいいが、Ubuntuに入れたほうがPX4のポテンシャルをフルに発揮できるし、VSCodeでデバックできる環境が用意されているので、ここではUbuntuに入れることを想定してWSL2環境を構築する。
+
+    手動インストール手順(Microsoft):[以前のバージョンの WSL の手動インストール手順](https://learn.microsoft.com/ja-jp/windows/wsl/install-manual)  
+    自動インストール手順(Microsoft):[WSL を使用して Windows に Linux をインストールする方法](https://learn.microsoft.com/ja-jp/windows/wsl/install)
+
+    1. Windowsバージョン確認  
+    Win+R→winverでWindowsOSビルド番号を確認して、19041以上であることを確認する。それ以下なら手動インストール手順を参照。  
+
+    1. WSL(Ubuntu)をインストール  
+    コマンドプロンプトを管理者権限で開いて以下を実行する。
+        ```
+        wsl --install -d ubuntu
+        ```
+    1. WSLバージョンを確認/切り替え  
+        コマンドプロンプトで以下を実行する。
+        ```
+        wsl -l -v
+        ```
+        バージョンが1なら以下のコマンドで2に切り替える。  
+        ```
+        wsl --set-version Ubuntu 2
+        ```
+1. PX4 Toolchainをインストールする(WSL Ubuntuに)  
+    参考:[Windows Development Environment (WSL2-Based)](https://docs.px4.io/main/en/dev_setup/dev_env_windows_wsl.html)
+
+    1. Ubuntuの起動  
+        スタートメニューでUbuntuアプリを検索して実行。  
+    1. PX4ソースコードダウンロード  
+        Ubuntuターミナル上で以下を実行(homeディレクトリ)  
+        ```
+        git clone https://github.com/PX4/PX4-Autopilot.git --recursive
+        ```
+    1. セットアップスクリプトの実行  
+        以下を実行する。
+        ```
+        bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
+        ```
+    1. WSLの再起動  
+        Ubuntuを閉じて、再度開く。  
+
+    1. ビルドできるか確認  
+        ```
+        cd ~/PX4-Autopilot
+        make px4_sitl
+        ```
+1. VSCode環境を構築する  
+    1. [ここ](https://code.visualstudio.com/)からVSCodeをダウンロードしてインストールする。(Windows上に)  
+    1. Remote-WSL拡張を追加する。
+        1. VSCodeを起動する。  
+        1. 左のバーから拡張機能(Extension)を選択する。  
+        1. wslで検索してインストールする。 
+
+1. VSCodeでWSL上のソースファイルを開く  
+    1. Ubuntuを開く。  
+    1. PX4ソースディレクトリに移動する。  
+        ```
+        cd PX4-Autopilot
+        ```
+    1. VSCodeでそのディレクトリを開く。  
+        ```
+        code .
+        ```
+1. QGroundControlをインストールする(Windowsに)  
+    [ここ](https://docs.qgroundcontrol.com/master/en/getting_started/download_and_install.html)からインストーラをダウンロードしてインストールする。  
+    
+
+## fork元の変更をこのリポジトリにmergeする
+
+fork元に更新があったときに、このリポジトリにも反映したいことがあるので、そのやり方メモ。
+1. fork元をリモートリポジトリに追加する。(例えばfork_originという名前で。)
+    ```
+    $ git remote add fork_origin https://github.com/aviumtechnologies/pixhawk-sil-connector.git
+    ```
+
+1. fetchしてmergeする。
+    ```
+    $ git fetch fork_origin
+    $ git merge fork_origin/master
+    ```
+    
+    
+[参考:fork 元のリポジトリの更新を fork 先に merge する](https://nobilearn.medium.com/fork-%E5%85%83%E3%81%AE%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E3%81%AE%E6%9B%B4%E6%96%B0%E3%82%92-fork-%E5%85%88%E3%81%AB-merge-%E3%81%99%E3%82%8B-6fa138921c93)
+
+
+
 # Pixhawk SIL Connector for Simulink
 
 Simulink C++ S-function for software-in-the-loop simulation with Pixhawk.
