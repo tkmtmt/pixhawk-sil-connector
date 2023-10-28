@@ -7,64 +7,73 @@ px4のSITLを用いてミッションの確認やアルゴリズムの確認を�
 いかにSimulink環境とPX4環境の構築方法を示す。
 
 ## 環境構築
-1. MATLAB/Simulinkをインストールする  
-    MATLABは有料ソフトである。homeライセンスはそんなに高くないから買っちゃおう。  
-    とりあえずMATLABとSimulinkがあれば動くと思う。  
-    https://jp.mathworks.com/products/matlab.html
+### MATLAB/Simulink環境を構築する  
+1. MATLAB/Simulinkをインストールする。  
+https://jp.mathworks.com/products/matlab.html
+1. mexファイルを作成する。  
+    1. include.zipを解凍する。  
+    1. make.mを実行する。(1回だけでOK)  
+    memo:  
+    コンパイラの確認。  
+        ```
+        mex -setup c++
+        ```
 
-1. Windows Subsystem for Linuxを導入する  
-    PX4Toolchainを入れるための前準備。  
-    PX4ToolchainはWindowsに直接入れてもいいが、Ubuntuに入れたほうがPX4のポテンシャルをフルに発揮できるし、VSCodeでデバックできる環境が用意されているので、ここではUbuntuに入れることを想定してWSL2環境を構築する。
+### Windows Subsystem for Linuxを導入する  
+PX4Toolchainを入れるための前準備。  
+PX4ToolchainはWindowsに直接入れてもいいが、Ubuntuに入れたほうがPX4のポテンシャルをフルに発揮できるし、VSCodeでデバックできる環境が用意されているので、ここではUbuntuに入れることを想定してWSL2環境を構築する。
 
-    手動インストール手順(Microsoft):[以前のバージョンの WSL の手動インストール手順](https://learn.microsoft.com/ja-jp/windows/wsl/install-manual)  
-    自動インストール手順(Microsoft):[WSL を使用して Windows に Linux をインストールする方法](https://learn.microsoft.com/ja-jp/windows/wsl/install)
+手動インストール手順(Microsoft):[以前のバージョンの WSL の手動インストール手順](https://learn.microsoft.com/ja-jp/windows/wsl/install-manual)  
+自動インストール手順(Microsoft):[WSL を使用して Windows に Linux をインストールする方法](https://learn.microsoft.com/ja-jp/windows/wsl/install)
 
-    1. Windowsバージョン確認  
-    Win+R→winverでWindowsOSビルド番号を確認して、19041以上であることを確認する。それ以下なら手動インストール手順を参照。  
+1. Windowsバージョン確認  
+Win+R→winverでWindowsOSビルド番号を確認して、19041以上であることを確認する。それ以下なら手動インストール手順を参照。  
 
-    1. WSL(Ubuntu)をインストール  
-    コマンドプロンプトを管理者権限で開いて以下を実行する。
-        ```
-        wsl --install -d ubuntu
-        ```
-    1. WSLバージョンを確認/切り替え  
-        コマンドプロンプトで以下を実行する。
-        ```
-        wsl -l -v
-        ```
-        バージョンが1なら以下のコマンドで2に切り替える。  
-        ```
-        wsl --set-version Ubuntu 2
-        ```
-1. PX4 Toolchainをインストールする(WSL Ubuntuに)  
-    参考:[Windows Development Environment (WSL2-Based)](https://docs.px4.io/main/en/dev_setup/dev_env_windows_wsl.html)
+1. WSL(Ubuntu)をインストール  
+コマンドプロンプトを管理者権限で開いて以下を実行する。
+    ```
+    wsl --install -d ubuntu
+    ```
+1. WSLバージョンを確認/切り替え  
+    コマンドプロンプトで以下を実行する。
+    ```
+    wsl -l -v
+    ```
+    バージョンが1なら以下のコマンドで2に切り替える。  
+    ```
+    wsl --set-version Ubuntu 2
+    ```
 
-    1. Ubuntuの起動  
-        スタートメニューでUbuntuアプリを検索して実行。  
-    1. PX4ソースコードダウンロード  
-        Ubuntuターミナル上で以下を実行(homeディレクトリ)  
-        ```
-        git clone https://github.com/PX4/PX4-Autopilot.git --recursive
-        ```
-    1. セットアップスクリプトの実行  
-        以下を実行する。
-        ```
-        bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
-        ```
-    1. WSLの再起動  
-        Ubuntuを閉じて、再度開く。  
+### PX4 Toolchainをインストールする(WSL Ubuntuに)  
+参考:[Windows Development Environment (WSL2-Based)](https://docs.px4.io/main/en/dev_setup/dev_env_windows_wsl.html)
 
-    1. ビルドできるか確認  
-        ```
-        cd ~/PX4-Autopilot
-        make px4_sitl
-        ```
-1. VSCode環境を構築する  
-    1. [ここ](https://code.visualstudio.com/)からVSCodeをダウンロードしてインストールする。(Windows上に)  
-    1. Remote-WSL拡張を追加する。
-        1. VSCodeを起動する。  
-        1. 左のバーから拡張機能(Extension)を選択する。  
-        1. wslで検索してインストールする。 
+1. Ubuntuの起動  
+    スタートメニューでUbuntuアプリを検索して実行。  
+1. PX4ソースコードダウンロード  
+    Ubuntuターミナル上で以下を実行(homeディレクトリ)  
+    ```
+    git clone https://github.com/PX4/PX4-Autopilot.git --recursive
+    ```
+1. セットアップスクリプトの実行  
+    以下を実行する。
+    ```
+    bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
+    ```
+1. WSLの再起動  
+    Ubuntuを閉じて、再度開く。  
+
+1. ビルドできるか確認  
+    ```
+    cd ~/PX4-Autopilot
+    make px4_sitl
+    ```
+
+### VSCode環境を構築する  
+1. [ここ](https://code.visualstudio.com/)からVSCodeをダウンロードしてインストールする。(Windows上に)  
+1. Remote-WSL拡張を追加する。
+    1. VSCodeを起動する。  
+    1. 左のバーから拡張機能(Extension)を選択する。  
+    1. wslで検索してインストールする。 
 
 1. VSCodeでWSL上のソースファイルを開く  
     1. Ubuntuを開く。  
@@ -76,115 +85,100 @@ px4のSITLを用いてミッションの確認やアルゴリズムの確認を�
         ```
         code .
         ```
-1. QGroundControlをインストールする(Windowsに)  
-    [ここ](https://docs.qgroundcontrol.com/master/en/getting_started/download_and_install.html)からインストーラをダウンロードしてインストールする。  
-
-## 実行  
-1. include.zipを解凍する。  
-1. make.mを実行する。(1回だけでOK)  
-    memo:  
-    コンパイラの確認。  
-    ```
-    mex -setup c++
-    ```
-1. QGCの設定  
-    Ubuntu上で実行しているPX4と接続するために新しいComm Linkを作成する。  
-    1. スタートバーにQgroundControlと入力してQGCを立ち上げる。  
-    1. Ubuntuを起動する。  
-    1. Ubuntuターミナル上で以下のコマンドを実行してIPを調べる。(inet)  
-        ```
-        ip addr | grep eth0
-        ```
-    1. QGC上で新しい通信リンクを作成する。  
-        アプリケーション設定→通信リンク→追加  
-        名前は適当に入力してUDP選択。  
-        port：`18570`、IP：（上で調べたやつ）でサーバ追加して接続。  
-
-1. IP設定  
-    1. WindowのIPアドレスを調べる  
-        コマンドプロンプトを開いて以下を実行。  
-        ```
-        ipconfig
-        ```
-
-    2. Ubuntu上の`~PX4-Autopilot\start.sh`を開いて編集  
-        ```
-        export PX4_SIM_HOST_ADDR= 上で調べたIPアドレス
-        ```
-1. 実行
-    1. simulinkモデルを開いて実行する。(pixhawk_sil_connector_example.slx)  
-    1. Ubuntu上のターミナルで以下を実行。  
-        ```
-        ./start.sh
-        ```
-
-1. VSCodeによるデバッグ  
-    1. simulinkモデルを開いて実行する。(pixhawk_sil_connector_example.slx)  
-    1. Ubuntuを立ち上げる  
-    1. PX4ソースディレクトリに移動する  
-        ```
-        cd PX4-Autopilot
-        ```
-    1. 以下のコマンドでIPアドレスを設定する。  
-        ```
-        export PX4_SIM_HOST_ADDR=x.x.x.x (4.IP設定と同じ)
-        ```
-    1. VSCodeでそのディレクトリを開く。  
-        ```
-        code .
-        ```
     1. 拡張機能をインストールするか聞かれるのですべてインストールする。
-    1. 左のタブから実行とデバッグを選択。  
-    1. lunch.jsonを開いて、以下を追加。  
-        ```
-        {
-            "name": "SITL (simulink)",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${command:cmake.launchTargetPath}",
-            "args": [
-                "${workspaceFolder}/ROMFS/px4fmu_common"
-            ],
-            "stopAtEntry": false,
-            "cwd": "${command:cmake.buildDirectory}/rootfs",
-            "environment": [
-                {
-                    "name": "PX4_SIM_MODEL",
-                    "value": "none_iris"
-                }
-            ],
-            "postDebugTask": "px4_sitl_cleanup",
-            "linux": {
-                "MIMode": "gdb",
-                "externalConsole": false,
-                "setupCommands": [
-                    {
-                        "description": "Enable pretty-printing for gdb",
-                        "text": "-enable-pretty-printing",
-                        "ignoreFailures": true
-                    },
-                    {
-                        "description": "PX4 ignore wq signals",
-                        "text": "handle SIGCONT nostop noprint nopass",
-                        "ignoreFailures": true
-                    }
-                ]
-            },
-            "osx": {
-                "MIMode": "lldb",
-                "externalConsole": true,
-                "setupCommands": [
-                    {
-                        "text": "pro hand -p true -s false -n false SIGCONT",
-                    }
-                ]
-            }
-        }
-        ```
-    1. 実行とデバッグのドロップダウンから、上記で追加したSITL (simulink)を選択してデバッグ開始。
-    1. 好きなところにブレークポイントを設定する。
 
-    参考:[SITL Debugging](https://docs.px4.io/main/en/dev_setup/vscode.html#visual-studio-code-ide-vscode)
+### QGroundControlStationの環境を構築する(Windows)  
+1. [ここ](https://docs.qgroundcontrol.com/master/en/getting_started/download_and_install.html)からインストーラをダウンロードしてインストールする。   
+1. Ubuntuを起動する。  
+1. Ubuntuターミナル上で以下のコマンドを実行してIPを調べる。(inet)  
+    ```
+    ip addr | grep eth0
+    ```
+1. スタートバーにQgroundControlと入力してQGCを立ち上げる。 
+1. QGC上で新しい通信リンクを作成する。  
+    アプリケーション設定→通信リンク→追加  
+    名前は適当に入力してUDP選択。  
+    port：`18570`、IP：（上で調べたやつ）でサーバ追加。（WSLは動的にIPが割り振られるので毎回設定必要。）
+
+# 実行  
+1. WindowsPCのIPアドレスを調べる。  
+    コマンドプロンプトを開いて以下を実行。  
+    ```
+    ipconfig
+    ```
+1. simulinkモデルを開いて実行する。(pixhawk_sil_connector_example.slx)  
+1. Ubuntu上のターミナルで以下を実行する。  
+    ```
+    export PX4_SIM_HOST_ADDR= 上で調べたIPアドレス
+    make px4_sitl none_iris
+    ```
+
+## VSCodeによるデバッグ  
+1. simulinkモデルを開いて実行する。(pixhawk_sil_connector_example.slx)  
+1. Ubuntuを立ち上げる。  
+1. PX4ソースディレクトリに移動する  
+    ```
+    cd PX4-Autopilot
+    ```
+1. 以下のコマンドでIPアドレスを設定する。  
+    ```
+    export PX4_SIM_HOST_ADDR=x.x.x.x (4.IP設定と同じ)
+    ```
+1. VSCodeでそのディレクトリを開く。  
+    ```
+    code .
+    ```
+1. 左のタブから実行とデバッグを選択。  
+1. lunch.jsonを開いて、以下を追加。  
+    ```
+    {
+        "name": "SITL (simulink)",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${command:cmake.launchTargetPath}",
+        "args": [
+            "${workspaceFolder}/ROMFS/px4fmu_common"
+        ],
+        "stopAtEntry": false,
+        "cwd": "${command:cmake.buildDirectory}/rootfs",
+        "environment": [
+            {
+                "name": "PX4_SIM_MODEL",
+                "value": "none_iris"
+            }
+        ],
+        "postDebugTask": "px4_sitl_cleanup",
+        "linux": {
+            "MIMode": "gdb",
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "PX4 ignore wq signals",
+                    "text": "handle SIGCONT nostop noprint nopass",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        "osx": {
+            "MIMode": "lldb",
+            "externalConsole": true,
+            "setupCommands": [
+                {
+                    "text": "pro hand -p true -s false -n false SIGCONT",
+                }
+            ]
+        }
+    }
+    ```
+1. 実行とデバッグのドロップダウンから、上記で追加したSITL (simulink)を選択してデバッグ開始。
+1. 好きなところにブレークポイントを設定する。
+
+参考:[SITL Debugging](https://docs.px4.io/main/en/dev_setup/vscode.html#visual-studio-code-ide-vscode)
 
 
 ## fork元の変更をこのリポジトリにmergeする
