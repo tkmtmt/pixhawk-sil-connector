@@ -181,7 +181,7 @@ maxRudderAngle = 5;   % deg
 load('InterLinkCalib.mat')
 
 %% シミュレーション設定
-dt = 0.01;
+dt = 0.004;
 tend = Inf;
 
 % アニメーションオブジェクト初期位置
