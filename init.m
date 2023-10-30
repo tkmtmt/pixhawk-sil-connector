@@ -18,6 +18,13 @@ close all;
 Env.rho = 1.164;      % density[kg/m^3]
 Env.g = 9.81;        % gravity[m/s^2]
 
+% 基準位置(GFC飛行場)
+Env.lat = 36.48522717418173;
+Env.lon = 139.95972456847554;
+
+% 基準位置における地磁気(ned)
+Env.mag = [29673 -4123 36436];
+
 % 定常風速(NED座標)
 Env.Uw = 0;   % [m/s]
 Env.Vw = 0;

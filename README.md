@@ -106,11 +106,16 @@ Win+R→winverでWindowsOSビルド番号を確認して、19041以上である�
     ```
     ipconfig
     ```
-1. simulinkモデルを開いて実行する。(pixhawk_sil_connector_example.slx)  
-1. Ubuntu上のターミナルで以下を実行する。  
+1. start.shを書き換える。  
     ```
-    export PX4_SIM_HOST_ADDR= 上で調べたIPアドレス
-    make px4_sitl none_iris
+    export PX4_SIM_HOST_ADDR = 上で調べたIPアドレス(例えば192.168.1.6)
+    ```
+1. start.shをUbuntuにコピーする。  
+1. simulinkモデルを開いて実行する。(pixhawk_sil_connector_example.slx)  
+1. Ubuntuのターミナルで以下を実行する。
+    ```
+    cd ~/PX4-Autopilot
+    ./start.sh
     ```
 
 ## VSCodeによるデバッグ  
